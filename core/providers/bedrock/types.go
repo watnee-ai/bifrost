@@ -55,6 +55,14 @@ func (r *BedrockTextCompletionRequest) GetExtraParams() map[string]interface{} {
 	return r.ExtraParams
 }
 
+// GetParameterMappings maps OpenAI-compatible parameter names to Bedrock text completion JSON paths.
+func (r *BedrockTextCompletionRequest) GetParameterMappings() map[string]string {
+	return map[string]string{
+		"stop":       "stop_sequences",
+		"max_tokens": "max_tokens_to_sample",
+	}
+}
+
 // IsStreamingRequested implements the StreamingRequest interface
 func (r *BedrockTextCompletionRequest) IsStreamingRequested() bool {
 	return r.Stream
@@ -90,6 +98,19 @@ type BedrockConverseRequest struct {
 // GetExtraParams implements the RequestBodyWithExtraParams interface
 func (r *BedrockConverseRequest) GetExtraParams() map[string]interface{} {
 	return r.ExtraParams
+}
+
+// GetParameterMappings maps OpenAI-compatible parameter names to Bedrock Converse JSON paths.
+func (r *BedrockConverseRequest) GetParameterMappings() map[string]string {
+	return map[string]string{
+		"temperature":           "inferenceConfig.temperature",
+		"top_p":                 "inferenceConfig.topP",
+		"max_completion_tokens": "inferenceConfig.maxTokens",
+		"stop":                  "inferenceConfig.stopSequences",
+		"tools":                 "toolConfig.tools",
+		"tool_choice":           "toolConfig.toolChoice",
+		"service_tier":          "serviceTier",
+	}
 }
 
 // IsStreamingRequested implements the StreamingRequest interface
@@ -662,6 +683,8 @@ func (req *BedrockTitanEmbeddingRequest) GetExtraParams() map[string]interface{}
 	return req.ExtraParams
 }
 
+func (req *BedrockTitanEmbeddingRequest) GetParameterMappings() map[string]string { return nil }
+
 // BedrockTitanEmbeddingResponse represents a Bedrock Titan embedding response
 type BedrockTitanEmbeddingResponse struct {
 	Embedding           []float64 `json:"embedding"`           // The embedding vector
@@ -704,6 +727,8 @@ func (req *BedrockCohereEmbeddingRequest) GetExtraParams() map[string]interface{
 	return req.ExtraParams
 }
 
+func (req *BedrockCohereEmbeddingRequest) GetParameterMappings() map[string]string { return nil }
+
 // BedrockCohereEmbeddingResponse handles both Bedrock Cohere embedding response shapes.
 // When embedding_types is not set, Bedrock returns embeddings as a raw [][]float32
 // ("embeddings_floats"). When embedding_types is set, it returns an object with typed
@@ -734,6 +759,8 @@ func (req *BedrockImageGenerationRequest) GetExtraParams() map[string]interface{
 	return req.ExtraParams
 }
 
+func (req *BedrockImageGenerationRequest) GetParameterMappings() map[string]string { return nil }
+
 type BedrockTextToImageParams struct {
 	Text         string  `json:"text"`                   // Prompt for image generation
 	NegativeText *string `json:"negativeText,omitempty"` // Negative prompt for image generation
@@ -762,6 +789,8 @@ func (req *BedrockImageVariationRequest) GetExtraParams() map[string]interface{}
 	return req.ExtraParams
 }
 
+func (req *BedrockImageVariationRequest) GetParameterMappings() map[string]string { return nil }
+
 type BedrockImageVariationParams struct {
 	Text               *string  `json:"text,omitempty"`               // Prompt/text for variation
 	NegativeText       *string  `json:"negativeText,omitempty"`       // Negative prompt
@@ -783,6 +812,8 @@ type BedrockImageEditRequest struct {
 func (req *BedrockImageEditRequest) GetExtraParams() map[string]interface{} {
 	return req.ExtraParams
 }
+
+func (req *BedrockImageEditRequest) GetParameterMappings() map[string]string { return nil }
 
 type BedrockInPaintingParams struct {
 	Image        string  `json:"image"`                  // Base64-encoded image
@@ -822,6 +853,8 @@ type StabilityAIImageGenerationRequest struct {
 func (req *StabilityAIImageGenerationRequest) GetExtraParams() map[string]interface{} {
 	return req.ExtraParams
 }
+
+func (req *StabilityAIImageGenerationRequest) GetParameterMappings() map[string]string { return nil }
 
 // StabilityAIImageEditRequest is the flat JSON body for Stability AI image-edit models on Bedrock.
 // Only the fields valid for the detected task type are populated.
@@ -871,6 +904,8 @@ type StabilityAIImageEditRequest struct {
 func (req *StabilityAIImageEditRequest) GetExtraParams() map[string]interface{} {
 	return req.ExtraParams
 }
+
+func (req *StabilityAIImageEditRequest) GetParameterMappings() map[string]string { return nil }
 
 // BedrockImageGenerationResponse represents a Bedrock image generation response.
 // The Seeds and FinishReasons fields are populated by Stability AI edit models only.

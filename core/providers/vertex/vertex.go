@@ -371,6 +371,7 @@ func (provider *VertexProvider) ChatCompletion(ctx *schemas.BifrostContext, key 
 			// Format messages for Vertex API, preserving key order for prompt caching
 			var rawBody []byte
 			var extraParams map[string]interface{}
+			var paramMappings map[string]string
 			var err error
 
 			if schemas.IsAnthropicModel(request.Model) {
@@ -383,6 +384,7 @@ func (provider *VertexProvider) ChatCompletion(ctx *schemas.BifrostContext, key 
 					return nil, fmt.Errorf("chat completion input is not provided")
 				}
 				extraParams = reqBody.GetExtraParams()
+				paramMappings = reqBody.GetParameterMappings()
 				// Add provider-aware beta headers for Vertex
 				anthropic.AddMissingBetaHeadersToContext(ctx, reqBody, schemas.Vertex)
 				// Marshal to JSON bytes, preserving struct field order
@@ -418,6 +420,7 @@ func (provider *VertexProvider) ChatCompletion(ctx *schemas.BifrostContext, key 
 					return nil, fmt.Errorf("chat completion input is not provided")
 				}
 				extraParams = reqBody.GetExtraParams()
+				paramMappings = reqBody.GetParameterMappings()
 				// Strip unsupported fields for Vertex Gemini
 				stripVertexGeminiUnsupportedFields(reqBody)
 				// Marshal to JSON bytes
@@ -444,7 +447,7 @@ func (provider *VertexProvider) ChatCompletion(ctx *schemas.BifrostContext, key 
 			if err != nil {
 				return nil, fmt.Errorf("failed to delete region field: %w", err)
 			}
-			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams}, nil
+			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams, ParamMappings: paramMappings}, nil
 		},
 	)
 	if bifrostErr != nil {
@@ -702,6 +705,7 @@ func (provider *VertexProvider) ChatCompletionStream(ctx *schemas.BifrostContext
 					return nil, fmt.Errorf("chat completion input is not provided")
 				}
 				extraParams = reqBody.GetExtraParams()
+				paramMappings := reqBody.GetParameterMappings()
 				reqBody.Stream = new(true)
 				// Add provider-aware beta headers for Vertex
 				anthropic.AddMissingBetaHeadersToContext(ctx, reqBody, schemas.Vertex)
@@ -736,7 +740,7 @@ func (provider *VertexProvider) ChatCompletionStream(ctx *schemas.BifrostContext
 				if err != nil {
 					return nil, fmt.Errorf("failed to delete region field: %w", err)
 				}
-				return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams}, nil
+				return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams, ParamMappings: paramMappings}, nil
 			},
 		)
 		if bifrostErr != nil {
@@ -1681,6 +1685,7 @@ func (provider *VertexProvider) ImageGeneration(ctx *schemas.BifrostContext, key
 		func() (providerUtils.RequestBodyWithExtraParams, error) {
 			var rawBody []byte
 			var extraParams map[string]interface{}
+			var paramMappings map[string]string
 			var err error
 
 			if schemas.IsGeminiModel(request.Model) || schemas.IsAllDigitsASCII(request.Model) {
@@ -1714,7 +1719,7 @@ func (provider *VertexProvider) ImageGeneration(ctx *schemas.BifrostContext, key
 			if err != nil {
 				return nil, fmt.Errorf("failed to delete region field: %w", err)
 			}
-			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams}, nil
+			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams, ParamMappings: paramMappings}, nil
 		},
 	)
 	if bifrostErr != nil {
@@ -1913,6 +1918,7 @@ func (provider *VertexProvider) ImageEdit(ctx *schemas.BifrostContext, key schem
 		func() (providerUtils.RequestBodyWithExtraParams, error) {
 			var rawBody []byte
 			var extraParams map[string]interface{}
+			var paramMappings map[string]string
 			var err error
 
 			if schemas.IsGeminiModel(request.Model) || schemas.IsAllDigitsASCII(request.Model) {
@@ -1946,7 +1952,7 @@ func (provider *VertexProvider) ImageEdit(ctx *schemas.BifrostContext, key schem
 			if err != nil {
 				return nil, fmt.Errorf("failed to delete region field: %w", err)
 			}
-			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams}, nil
+			return &VertexRawRequestBody{RawBody: rawBody, ExtraParams: extraParams, ParamMappings: paramMappings}, nil
 		},
 	)
 	if bifrostErr != nil {
